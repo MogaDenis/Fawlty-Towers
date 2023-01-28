@@ -35,4 +35,7 @@ class Reservation:
         return self._departure
 
     def __str__(self):
-        return f"{self.number} - {self.room_number} - {self.family_name} - {self.arrival.strftime('%d.%m')} - {self.departure.strftime('%d.%m')}"
+        return f"{self.number};{self.room_number};{self.family_name};{self.number_of_guests};{self.arrival.strftime('%d.%m')};{self.departure.strftime('%d.%m')}"
+
+    def __repr__(self):
+        return self.__str__()

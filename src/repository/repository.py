@@ -1,5 +1,6 @@
 from domain.room import Room
 from domain.reservation import Reservation
+from datetime import datetime
 
 
 class ReservationNotFoundException(Exception):
@@ -45,8 +46,11 @@ class RoomRepoIterator:
 
 
 class ReservationRepo:
-    def __init__(self):
-        self._list_of_reservations = []
+    def __init__(self, test_state=False):
+        if not test_state:
+            self._list_of_reservations = self.load_file()
+        else:
+            self._list_of_reservations = []
 
     def __iter__(self):
         return ReservationRepoIterator(self)
@@ -57,12 +61,15 @@ class ReservationRepo:
     def get_all(self):
         return self._list_of_reservations[:]
 
-    def add_reservation(self, new_reservation):
+    def add_reservation(self, new_reservation, test_state=False):
         for reservation in self:
             if new_reservation.number == reservation.number:
                 raise DuplicateReservationException
 
         self._list_of_reservations.append(new_reservation)
+
+        if not test_state:
+            self.save_file()
 
     def delete_reservation(self, reservation_number):
         """
@@ -84,39 +91,38 @@ class ReservationRepo:
             raise ReservationNotFoundException
 
     def load_file(self):
-        # TODO
         open_file = open("reservations.txt", 'r')
 
         lines = open_file.readlines()
 
-        list_of_rooms = []
+        list_of_reservations = []
 
         for line in lines:
-            tokens = line.split(';')
+            tokens = line.strip().split(';')
 
-            new_room = Room(tokens[0], tokens[1])
+            new_reservation = Reservation(tokens[0], tokens[1], tokens[2], int(tokens[3]), datetime.strptime(tokens[4], "%d.%m"), datetime.strptime(tokens[5], "%d.%m"))
 
-            list_of_rooms.append(new_room)
+            list_of_reservations.append(new_reservation)
 
-        return list_of_rooms[:]
+        open_file.close()
+
+        return list_of_reservations[:]
 
     def save_file(self):
-        pass
+        open_file = open("reservations.txt", 'w')
+
+        for reservation in self:
+            open_file.write(str(reservation) + '\n')
+
+        open_file.close()
 
 
 class RoomRepo:
     def __init__(self):
         self._list_of_rooms = self.load_file()
-        self._available_rooms = self._list_of_rooms[:]
 
     def get_all(self):
         return self._list_of_rooms[:]
-
-    def get_available_rooms(self):
-        return self._available_rooms[:]
-
-    def add_room(self):
-        pass    
 
     def __len__(self):
         return len(self._list_of_rooms)
@@ -137,6 +143,8 @@ class RoomRepo:
             new_room = Room(tokens[0], tokens[1])
 
             list_of_rooms.append(new_room)
+
+        open_file.close()
 
         return list_of_rooms[:]
 

@@ -39,6 +39,18 @@ class ConsoleUI:
 
         return user_input
 
+    def read_time_interval(self):
+        time_interval = input("Enter the time interval(dd.mm-dd.mm): ").strip()
+        tokens = time_interval.split('-')
+
+        if len(tokens) != 2:
+            raise ValueError
+
+        start_time = datetime.strptime(tokens[0], "%d.%m")
+        end_time = datetime.strptime(tokens[1], "%d.%m")
+
+        return start_time, end_time
+
     def read_reservation_data(self):
         family_name = input("Family name: ").strip()
         room_type = input("Room type(single/double/family): ").strip().lower()
@@ -83,6 +95,8 @@ class ConsoleUI:
                     print("\nThere are no rooms available for this reservation.\n")
                 except InvalidInputException:
                     print("\nInvalid input!\n")
+                except ValueError:
+                    print("\nInvalid input!\n")
 
             elif user_choice == '2':
                 # Delete a reservation. 
@@ -96,7 +110,20 @@ class ConsoleUI:
 
             elif user_choice == '3':
                 # Show available rooms. 
-                pass
+                try:
+                    start_time, end_time = self.read_time_interval()
+                    available_rooms = self.reservation_service.search_rooms_available_in_interval(start_time, end_time)
+
+                    if len(available_rooms) != 0:
+                        print("\n\tThe available rooms in the given time interval are:\n")
+                        for room in available_rooms:
+                            print(room)
+
+                    else:
+                        print("\n\tThere are no available rooms in the given time interval.\n")
+
+                except ValueError:
+                    print("\nInvalid input!\n")
 
             elif user_choice == '4':
                 # Monthly report. 
@@ -107,8 +134,6 @@ class ConsoleUI:
                 pass
 
             elif user_choice == '6':
-                available_rooms = self.room_repo.get_available_rooms()
-
                 for reservation in self.reservation_repo:
                     print(reservation)
 
@@ -117,7 +142,3 @@ class ConsoleUI:
                 for room in self.room_repo:
                     print(room)
 
-                print()
-
-                for room in available_rooms:
-                    print(room)
