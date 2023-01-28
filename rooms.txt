@@ -1,0 +1,4 @@
+1000;single
+1001;single
+1003;family
+1005;family
