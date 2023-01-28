@@ -1,5 +1,6 @@
-import random
+import random, copy
 from domain.reservation import Reservation
+from datetime import datetime, timedelta
 
 
 class NoAvailableRoomException(Exception):
@@ -17,6 +18,41 @@ class ReservationService:
             random_number += str(random.randint(0, 9))
 
         return random_number
+
+    def days_of_week_report(self):
+        days = {
+            'Monday': 0,
+            'Tuesday': 0, 
+            'Wednesday': 0, 
+            'Thursday': 0,
+            'Friday': 0,
+            'Saturday': 0,
+            'Sunday': 0
+        }
+        delta = timedelta(days=1)
+
+        for reservation in self._reservation_repo:
+            start_date = copy.deepcopy(reservation.arrival)
+            end_date = copy.deepcopy(reservation.departure)
+
+            iteration = 0
+            while start_date <= end_date:
+                if iteration != 0 and start_date.strftime("%A") == reservation.arrival.strftime("%A"):
+                    break
+                
+                days[start_date.strftime("%A")] += 1
+
+                iteration += 1
+                start_date += delta
+
+        days_list = []
+
+        for day in days:
+            days_list.append((day, days[day]))
+
+        days_list.sort(reverse=True, key=lambda x: x[1])
+
+        return days_list
 
     def search_rooms_available_in_interval(self, start_time, end_time):
         available_rooms = []

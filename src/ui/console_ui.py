@@ -131,7 +131,11 @@ class ConsoleUI:
 
             elif user_choice == '5':
                 # Day of the week report. 
-                pass
+                days_report = self.reservation_service.days_of_week_report()
+                print()
+                for pair in days_report:
+                    day, number_of_reservations = pair
+                    print(f"{day} - {number_of_reservations} reservations")
 
             elif user_choice == '6':
                 for reservation in self.reservation_repo:
