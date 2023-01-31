@@ -29,6 +29,9 @@ class ConsoleUI:
         if user_choice not in ['0', '1', '2', '3', '4', '5', '6']:
             raise InvalidInputException
 
+        if user_choice == '4':
+            raise NotImplementedError
+
         return user_choice
 
     def read_reservation_number(self):
@@ -82,6 +85,8 @@ class ConsoleUI:
                     break
                 except InvalidInputException:
                     print("\nInvalid input!\n")
+                except NotImplementedError:
+                    print("\nFunctionality not implemented! :(\n")
 
             if user_choice == '0':
                 break

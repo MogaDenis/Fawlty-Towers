@@ -91,7 +91,7 @@ class ReservationRepo:
             raise ReservationNotFoundException
 
     def load_file(self):
-        open_file = open("reservations.txt", 'r')
+        open_file = open("src/reservations.txt", 'r')
 
         lines = open_file.readlines()
 
@@ -109,7 +109,7 @@ class ReservationRepo:
         return list_of_reservations[:]
 
     def save_file(self):
-        open_file = open("reservations.txt", 'w')
+        open_file = open("src/reservations.txt", 'w')
 
         for reservation in self:
             open_file.write(str(reservation) + '\n')
@@ -131,7 +131,7 @@ class RoomRepo:
         return RoomRepoIterator(self)
 
     def load_file(self):
-        open_file = open("rooms.txt", 'r')
+        open_file = open("src/rooms.txt", 'r')
 
         lines = open_file.readlines()
 
